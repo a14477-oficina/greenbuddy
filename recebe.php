@@ -22,7 +22,7 @@ $stmt = $conn->prepare("
     VALUES (?, ?, ?)
 ");
 
-$stmt->bind_param("ssd", $data, $hora, $humidade);
+$stmt->bind_param("sss", $data, $hora, $humidade);
 
 if ($stmt->execute()) {
     echo "OK - Guardado na base de dados";
