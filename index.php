@@ -1,2 +1,4 @@
-Estou a ler php ? 
-<?php echo date('Y-m-d H:i:s'); ?>
+<?php
+header("Location: recebe.php");
+exit();
+?>
