@@ -59,3 +59,27 @@ input {
     text-decoration: none;
     font-size: 0.9rem;
 }
+
+/* Reset básico */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: #fdfdfd;
+    color: #333;
+}
+
+/* Garante que a logo na nav não fique gigante */
+.logo-mini img {
+    height: 50px;
+    width: auto;
+}
+
+/* Estilo para o formulário de login (se ainda usares a auth-card) */
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #f0f4f1;
+}

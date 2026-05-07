@@ -1,105 +1,90 @@
-<?php
-require "db.php";
-session_start();
-
-$erro = "";
-$modo = $_GET['modo'] ?? 'login'; // Alterna entre 'login' e 'registo'
-
-// --- LÓGICA DE REGISTO ---
-if (isset($_POST['btn-registar'])) {
-    $user = $_POST['username'];
-    $pass = password_hash($_POST['senha'], PASSWORD_DEFAULT); // Segurança!
-    $mail = $_POST['email'];
-    $tel  = $_POST['telemovel'];
-
-    $stmt = $conn->prepare("INSERT INTO utilizador (username, senha, email, telemovel) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("ssss", $user, $pass, $mail, $tel);
-    
-    if ($stmt->execute()) {
-        header("Location: index.php?modo=login&sucesso=1");
-    } else {
-        $erro = "Erro ao criar conta. Username já existe?";
-    }
-}
-
-// --- LÓGICA DE LOGIN ---
-if (isset($_POST['btn-login'])) {
-    $user = $_POST['username'];
-    $pass = $_POST['senha'];
-
-    $stmt = $conn->prepare("SELECT id_utilizador, senha FROM utilizador WHERE username = ?");
-    $stmt->bind_param("s", $user);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if ($row = $result->fetch_assoc()) {
-        if (password_verify($pass, $row['senha'])) {
-            $_SESSION['user_id'] = $row['id_utilizador'];
-            header("Location: recebe.php"); // Vai para o dashboard que criámos antes
-            exit;
-        }
-    }
-    $erro = "Username ou senha incorretos!";
-}
-?>
-
 <!DOCTYPE html>
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <title>GreenBuddy - Acesso</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GreenBuddy - O Teu Vaso Inteligente</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Estilos específicos da Landing Page */
+        .navbar {
+            width: 100%;
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: absolute;
+            top: 0;
+            box-sizing: border-box;
+        }
+
+        .btn-login {
+            background: #2d5a27;
+            color: white;
+            padding: 10px 25px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .hero {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding: 120px 50px;
+            flex-wrap: wrap;
+        }
+
+        .hero-text { max-width: 500px; }
+        .hero-text h1 { font-size: 3.5rem; color: #2d5a27; margin-bottom: 10px; }
+        .hero-text p { font-size: 1.2rem; color: #555; line-height: 1.6; }
+
+        .product-img img {
+            max-width: 450px;
+            filter: drop-shadow(0 20px 30px rgba(0,0,0,0.1));
+        }
+
+        .price-tag {
+            font-size: 2rem;
+            color: #007bff;
+            font-weight: bold;
+            margin: 20px 0;
+            display: block;
+        }
+
+        .btn-buy {
+            background: #ffc107;
+            color: #333;
+            padding: 15px 40px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
 
-<div class="auth-card">
-    <div class="logo-container">
-        <img src="logotipo_PAP.png" alt="GreenBuddy Logo">
-    </div>
+    <nav class="navbar">
+        <a href="login.php" class="btn-login">Iniciar Sessão</a>
+        <div class="logo-mini">
+            <img src="img/logotipo_PAP.png" alt="Logo" style="height: 50px;">
+        </div>
+    </nav>
 
-    <?php if ($modo == 'login'): ?>
-        <h2>Iniciar Sessão</h2>
-        <form method="POST">
-            <div class="input-group">
-                <label>Username</label>
-                <input type="text" name="username" required>
-            </div>
-            <div class="input-group">
-                <label>Senha</label>
-                <input type="password" name="senha" required>
-            </div>
-            <button type="submit" name="btn-login" class="btn">Entrar</button>
-            <a href="index.php?modo=registo" class="toggle-link">Não tem conta? Criar agora</a>
-        </form>
-
-    <?php else: ?>
-        <h2>Criar Conta</h2>
-        <form method="POST">
-            <div class="input-group">
-                <label>Username</label>
-                <input type="text" name="username" required>
-            </div>
-            <div class="input-group">
-                <label>Email</label>
-                <input type="email" name="email" required>
-            </div>
-            <div class="input-group">
-                <label>Telemóvel</label>
-                <input type="text" name="telemovel" required>
-            </div>
-            <div class="input-group">
-                <label>Senha</label>
-                <input type="password" name="senha" required>
-            </div>
-            <button type="submit" name="btn-registar" class="btn">Finalizar Registo</button>
-            <a href="index.php?modo=login" class="toggle-link">Já tenho conta</a>
-        </form>
-    <?php endif; ?>
-
-    <?php if ($erro): ?>
-        <p style="color: red; margin-top: 10px; font-size: 0.8rem;"><?php echo $erro; ?></p>
-    <?php endif; ?>
-</div>
+    <section class="hero">
+        <div class="hero-text">
+            <h1>GreenBuddy</h1>
+            <p>Nunca mais deixes as tuas plantas morrerem. O sistema de rega inteligente que cuida do que é importante para ti, de forma automática e controlada pelo telemóvel.</p>
+            <span class="price-tag">49,99€</span>
+            <a href="#" class="btn-buy">Comprar Agora</a>
+        </div>
+        
+        <div class="product-img">
+            <img src="img/logotipo_PAP.png" alt="GreenBuddy Vaso">
+        </div>
+    </section>
 
 </body>
 </html>
